@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Eye } from 'lucide-react';
-import { Post } from '../../types';
+import type { Post } from '../../types';
 
 interface PostCardProps {
   post: Post;

@@ -9,7 +9,7 @@ import Signup from './components/auth/Signup';
 import './index.css';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Set to true to show logged in state by default
+  const [isLoggedIn] = useState(true); 
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
 

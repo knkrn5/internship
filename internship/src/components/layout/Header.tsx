@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, Bell, MessageCircle, User, Menu, X } from 'lucide-react';
+import React, { useState } from "react";
+import { Search, Bell, MessageCircle, User, Menu, X } from "lucide-react";
 
 interface HeaderProps {
   onShowLogin: () => void;
@@ -8,7 +8,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onShowLogin, isLoggedIn = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
@@ -21,7 +21,9 @@ const Header: React.FC<HeaderProps> = ({ onShowLogin, isLoggedIn = false }) => {
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
                   <span className="text-white font-bold text-sm">A</span>
                 </div>
-                <span className="text-xl font-bold text-gray-900">ATOMWORLD</span>
+                <span className="text-xl font-bold text-gray-900">
+                  ATOMWORLD
+                </span>
               </div>
             </div>
           </div>
@@ -46,16 +48,25 @@ const Header: React.FC<HeaderProps> = ({ onShowLogin, isLoggedIn = false }) => {
           <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn ? (
               <>
-                <button className="relative p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100">
+                <button
+                  title="Notifications"
+                  className="relative p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100"
+                >
                   <Bell className="h-6 w-6" />
                   <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-400"></span>
                 </button>
-                <button className="relative p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100">
+                <button
+                  title="Messages"
+                  className="relative p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100"
+                >
                   <MessageCircle className="h-6 w-6" />
                   <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-blue-400"></span>
                 </button>
                 <div className="relative">
-                  <button className="flex items-center space-x-2 p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100">
+                  <button
+                    title="Profile"
+                    className="flex items-center space-x-2 p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100"
+                  >
                     <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                       <User className="h-5 w-5" />
                     </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Post, User } from '../types';
+import type { Post, User } from '../types';
 
 // Mock users
 const mockUsers: User[] = [
