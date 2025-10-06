@@ -1,7 +1,11 @@
-import express, { Request, Response } from 'express'
-import cors from 'cors'
 import dotenv from 'dotenv'
 dotenv.config({ quiet: true })
+
+import express, { Request, Response } from 'express'
+import cors from 'cors'
+import './db/mongoDbClient';
+
+
 
 
 const app = express()
