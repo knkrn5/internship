@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { testapi } from "../../utils/authUtils";
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -11,11 +13,13 @@ const LoginPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
+      testapi();
+
     console.log("Login attempt:", { email, password, rememberMe });
     // After successful login, navigate to dashboard
-    navigate("/");
+    // navigate("/");
   };
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

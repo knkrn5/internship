@@ -12,11 +12,11 @@ const dynamicCorsOptions = function (req: Request, callback: (err: any, options?
   let corsOptions;
   if (req.path.startsWith('/auth/')) {
     corsOptions = {
-      origin: 'http://mydomain.com',
+      origin: process.env.CLIENT_URL,
       credentials: true,
     };
   } else {
-    corsOptions = { origin: '*' };
+    corsOptions = { origin: process.env.CLIENT_URL };
   }
   callback(null, corsOptions);
 };
