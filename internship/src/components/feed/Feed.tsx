@@ -7,7 +7,7 @@ interface FeedProps {
   isLoggedIn?: boolean;
 }
 
-const Feed: React.FC<FeedProps> = ({ isLoggedIn = false }) => {
+const Feed: React.FC<FeedProps> = ({ isLoggedIn = true }) => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [sortBy, setSortBy] = useState('Recent');
   const { posts, loading } = usePosts();

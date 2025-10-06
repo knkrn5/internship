@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Search, Bell, MessageCircle, User, Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
-  onShowLogin: () => void;
   isLoggedIn?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ onShowLogin, isLoggedIn = false }) => {
+const Header: React.FC<HeaderProps> = ({ isLoggedIn = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -75,18 +75,18 @@ const Header: React.FC<HeaderProps> = ({ onShowLogin, isLoggedIn = false }) => {
               </>
             ) : (
               <div className="flex items-center space-x-3">
-                <button
-                  onClick={onShowLogin}
+                <Link
+                  to="/login"
                   className="px-4 py-2 text-blue-600 hover:text-blue-700 font-medium"
                 >
                   Sign In
-                </button>
-                <button
-                  onClick={onShowLogin}
+                </Link>
+                <Link
+                  to="/signup"
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
                 >
                   Join now
-                </button>
+                </Link>
               </div>
             )}
           </div>
@@ -143,18 +143,18 @@ const Header: React.FC<HeaderProps> = ({ onShowLogin, isLoggedIn = false }) => {
                 </>
               ) : (
                 <div className="flex flex-col space-y-2">
-                  <button
-                    onClick={onShowLogin}
+                  <Link
+                    to="/login"
                     className="w-full px-4 py-2 text-blue-600 hover:text-blue-700 font-medium text-left"
                   >
                     Sign In
-                  </button>
-                  <button
-                    onClick={onShowLogin}
+                  </Link>
+                  <Link
+                    to="/signup"
                     className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
                   >
                     Join now
-                  </button>
+                  </Link>
                 </div>
               )}
             </div>
