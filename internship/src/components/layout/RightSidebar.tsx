@@ -1,33 +1,33 @@
-import React from 'react';
-import { Users, User, MapPin, Calendar } from 'lucide-react';
+import React from "react";
+import { Users, User, MapPin, Calendar } from "lucide-react";
 
 interface RightSidebarProps {
   isLoggedIn?: boolean;
 }
 
-const RightSidebar: React.FC<RightSidebarProps> = ({ isLoggedIn = false }) => {
+const RightSidebar = ({ isLoggedIn = false }: RightSidebarProps) => {
   const recommendations = [
     {
-      id: '1',
-      name: 'Sarah West',
-      title: 'UI/UX Designer',
-      company: 'Tech Corp',
+      id: "1",
+      name: "Sarah West",
+      title: "UI/UX Designer",
+      company: "Tech Corp",
       mutualConnections: 12,
       avatar: null,
     },
     {
-      id: '2',
-      name: 'John Smith',
-      title: 'Software Developer',
-      company: 'StartupXYZ',
+      id: "2",
+      name: "John Smith",
+      title: "Software Developer",
+      company: "StartupXYZ",
       mutualConnections: 8,
       avatar: null,
     },
     {
-      id: '3',
-      name: 'Maria Garcia',
-      title: 'Product Manager',
-      company: 'Innovation Labs',
+      id: "3",
+      name: "Maria Garcia",
+      title: "Product Manager",
+      company: "Innovation Labs",
       mutualConnections: 15,
       avatar: null,
     },
@@ -35,45 +35,47 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ isLoggedIn = false }) => {
 
   const upcomingEvents = [
     {
-      id: '1',
-      title: 'Tax Benefits for Investment under National Pension Scheme launched by Government',
-      date: '2024-09-28',
+      id: "1",
+      title:
+        "Tax Benefits for Investment under National Pension Scheme launched by Government",
+      date: "2024-09-28",
       attendees: 45,
-      location: 'Virtual',
+      location: "Virtual",
     },
     {
-      id: '2',
-      title: 'Finance & Investment Elite Social Mixer @Lujazui',
-      date: '2024-10-02',
+      id: "2",
+      title: "Finance & Investment Elite Social Mixer @Lujazui",
+      date: "2024-10-02",
       attendees: 120,
-      location: 'Ahmedabad, India',
+      location: "Ahmedabad, India",
     },
   ];
 
   const jobs = [
     {
-      id: '1',
-      title: 'Software Developer - II',
-      company: 'Innovation Analytics',
-      location: 'Noida, India',
-      type: 'Full-time',
+      id: "1",
+      title: "Software Developer - II",
+      company: "Innovation Analytics",
+      location: "Noida, India",
+      type: "Full-time",
       applicants: 89,
     },
   ];
 
-  if (!isLoggedIn) {
-    return null;
-  }
+  // if (!isLoggedIn) {
+  //   return null;
+  // }
 
   return (
     <aside className="hidden xl:flex xl:w-80 xl:flex-col xl:fixed xl:right-0 xl:inset-y-0 xl:pt-16">
       <div className="flex-1 flex flex-col min-h-0 pt-4 pr-4">
         <div className="flex-1 flex flex-col pb-4 overflow-y-auto space-y-6">
-          
           {/* People You May Know */}
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             <div className="p-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Add to your feed</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Add to your feed
+              </h3>
             </div>
             <div className="p-4 space-y-4">
               {recommendations.map((person) => (
@@ -92,7 +94,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ isLoggedIn = false }) => {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900">{person.name}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {person.name}
+                    </p>
                     <p className="text-xs text-gray-500">{person.title}</p>
                     <p className="text-xs text-gray-500">{person.company}</p>
                     <p className="text-xs text-gray-400 mt-1">
@@ -115,7 +119,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ isLoggedIn = false }) => {
           {/* Recent Events */}
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             <div className="p-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Recent Activity
+              </h3>
             </div>
             <div className="p-4 space-y-4">
               {upcomingEvents.map((event) => (
@@ -148,7 +154,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ isLoggedIn = false }) => {
           {/* Jobs */}
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             <div className="p-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Jobs for you</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Jobs for you
+              </h3>
             </div>
             <div className="p-4 space-y-4">
               {jobs.map((job) => (
@@ -156,7 +164,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ isLoggedIn = false }) => {
                   <div className="flex items-center space-x-2 text-xs text-green-600">
                     <span className="font-medium">💼 Job</span>
                   </div>
-                  <h4 className="text-sm font-medium text-gray-900">{job.title}</h4>
+                  <h4 className="text-sm font-medium text-gray-900">
+                    {job.title}
+                  </h4>
                   <p className="text-xs text-gray-600">{job.company}</p>
                   <div className="flex items-center space-x-4 text-xs text-gray-500">
                     <div className="flex items-center space-x-1">
@@ -165,7 +175,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ isLoggedIn = false }) => {
                     </div>
                     <span>{job.type}</span>
                   </div>
-                  <p className="text-xs text-gray-500">{job.applicants} applicants</p>
+                  <p className="text-xs text-gray-500">
+                    {job.applicants} applicants
+                  </p>
                   <button className="text-xs text-blue-600 hover:text-blue-700 font-medium">
                     Apply on Timesjobs
                   </button>
@@ -173,7 +185,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ isLoggedIn = false }) => {
               ))}
             </div>
           </div>
-
         </div>
       </div>
     </aside>

@@ -19,31 +19,31 @@ const Feed: React.FC<FeedProps> = ({ isLoggedIn = true }) => {
     activeFilter === 'All' || post.category === activeFilter
   );
 
-  if (!isLoggedIn) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Computer Engineering
-          </h2>
-          <p className="text-lg text-gray-600 mb-8">
-            142,765 Computer Engineers follow this
-          </p>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              Join our community to see the latest posts
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Connect with fellow engineers, share knowledge, and stay updated with the latest in technology.
-            </p>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
-              Join Group
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (!isLoggedIn) {
+  //   return (
+  //     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  //       <div className="text-center">
+  //         <h2 className="text-3xl font-bold text-gray-900 mb-4">
+  //           Computer Engineering
+  //         </h2>
+  //         <p className="text-lg text-gray-600 mb-8">
+  //           142,765 Computer Engineers follow this
+  //         </p>
+  //         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+  //           <h3 className="text-xl font-semibold text-gray-900 mb-4">
+  //             Join our community to see the latest posts
+  //           </h3>
+  //           <p className="text-gray-600 mb-6">
+  //             Connect with fellow engineers, share knowledge, and stay updated with the latest in technology.
+  //           </p>
+  //           <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
+  //             Join Group
+  //           </button>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <main className="flex-1 lg:pl-64 xl:pr-80">
