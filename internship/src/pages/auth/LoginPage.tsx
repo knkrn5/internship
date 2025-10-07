@@ -18,7 +18,7 @@ const LoginPage = () => {
   const login = async () => {
     setErrorMessage("");
     setSuccessMessage("");
-    
+
     const doesUserExist = await verifyEmail(email);
     if (!doesUserExist.IsSuccess) {
       setErrorMessage(`${doesUserExist.message}, Please Signup`);
@@ -26,10 +26,14 @@ const LoginPage = () => {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${API_URL}/auth/login`,
+        {
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
       return response.data;
     } catch (error) {
       if (error instanceof axios.AxiosError && error.response) {
@@ -51,7 +55,7 @@ const LoginPage = () => {
       const res = await login();
       if (res?.IsSuccess) {
         setSuccessMessage("Login Successful! Redirecting...");
-        setTimeout(() => navigate("/"), 2000);
+        // setTimeout(() => navigate("/"), 2000);
       } else {
         setErrorMessage(res?.message || "Login failed. Please try again.");
       }

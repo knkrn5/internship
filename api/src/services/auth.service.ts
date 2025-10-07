@@ -1,6 +1,7 @@
 import ApiResponse from "../dtos/apiResponse";
 import userModel from "../models/userModel";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 export class UserService {
 
@@ -72,6 +73,8 @@ export class UserService {
             return new ApiResponse(401, false, "Invalid credentials", null);
         }
 
-        return new ApiResponse(200, true, "Login successful", user);
+        const accessToken = jwt.sign({ userId: user._id, email: user.email }, 'karantest', { expiresIn: '1h' });
+
+        return new ApiResponse(200, true, "Login successful", { user, accessToken });
     }
 }
