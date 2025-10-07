@@ -1,9 +1,8 @@
+
 import { MongoClient, ServerApiVersion } from "mongodb";
-import dotenv from 'dotenv'
-dotenv.config({ quiet: true })
 
 const uri = process.env.MONGO_DB_URI as string;
-console.log("mongo uri", process.env.MONGO_DB_URI);
+
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {

@@ -20,7 +20,6 @@ const LoginPage = () => {
     // navigate("/");
   };
 
-
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-xl">

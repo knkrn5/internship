@@ -1,16 +1,12 @@
-import dotenv from 'dotenv'
-dotenv.config({ quiet: true })
-
+// import dotenv from 'dotenv'
+// dotenv.config({ quiet: true })
 import express, { Request, Response } from 'express'
 import cors from 'cors'
-import './db/mongoDbClient';
-
-
+import './db/mongooseConnect';
 
 
 const app = express()
 const port = process.env.PORT || 8000
-
 
 const dynamicCorsOptions = function (req: Request, callback: (err: any, options?: cors.CorsOptions) => void) {
   let corsOptions;
