@@ -1,8 +1,11 @@
 // import dotenv from 'dotenv'
 // dotenv.config({ quiet: true })
 import express, { Request, Response } from 'express'
+
+
 import cors from 'cors'
 import './db/mongooseConnect';
+import { authRouter } from './routes/auth.route';
 
 
 const app = express()
@@ -23,12 +26,15 @@ const dynamicCorsOptions = function (req: Request, callback: (err: any, options?
 
 
 app.use(cors(dynamicCorsOptions))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/auth', authRouter)
 
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!')
 })
-
 
 app.get('/health', (req: Request, res: Response) => {
   res.send('OK')
