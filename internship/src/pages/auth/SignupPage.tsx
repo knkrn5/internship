@@ -24,12 +24,17 @@ const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const navigate = useNavigate();
 
   const registerUser = async () => {
+    setErrorMessage("");
+    setSuccessMessage("");
+    
     const doesEmailExist = await verifyEmail(userData.email);
     if (doesEmailExist.IsSuccess) {
-      alert(`${doesEmailExist.message}, Please Login`);
+      setErrorMessage(`${doesEmailExist.message}, Please Login`);
       return;
     }
 
@@ -44,36 +49,45 @@ const SignupPage: React.FC = () => {
       return response.data;
     } catch (error) {
       console.error("Error during registration:", error);
+      const errorMsg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Registration failed. Please try again.";
+      setErrorMessage(errorMsg);
+      throw error;
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userData.email)) {
-      alert("Please enter a valid email address.");
+      setErrorMessage("Please enter a valid email address.");
       return;
     }
 
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(userData.password)) {
-      alert(
+      setErrorMessage(
         "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
       );
       return;
     }
 
     if (userData.password !== userData.confirmPassword) {
-      alert("Passwords do not match.");
+      setErrorMessage("Passwords do not match.");
       return;
     }
 
-    const res = await registerUser();
-    if (res.IsSuccess) {
-      alert("Registration Successful, Please Login");
-      navigate("/login");
+    try {
+      const res = await registerUser();
+      if (res?.IsSuccess) {
+        setSuccessMessage("Registration Successful! Redirecting to login...");
+        setTimeout(() => navigate("/login"), 2000);
+      }
+    } catch {
+      // Error already set in registerUser
     }
   };
 
@@ -273,6 +287,26 @@ const SignupPage: React.FC = () => {
           >
             Create Account
           </button>
+
+          {/* Error Message Display */}
+          {errorMessage && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600 flex items-start">
+                <span className="mr-2">⚠️</span>
+                <span>{errorMessage}</span>
+              </p>
+            </div>
+          )}
+
+          {/* Success Message Display */}
+          {successMessage && (
+            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-600 flex items-start">
+                <span className="mr-2">✓</span>
+                <span>{successMessage}</span>
+              </p>
+            </div>
+          )}
         </form>
 
         {/* Back to Home */}

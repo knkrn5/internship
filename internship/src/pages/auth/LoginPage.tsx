@@ -11,15 +11,20 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const navigate = useNavigate();
 
   const login = async () => {
+    setErrorMessage("");
+    setSuccessMessage("");
+    
     const doesUserExist = await verifyEmail(email);
     if (!doesUserExist.IsSuccess) {
-      alert(`${doesUserExist.message}, Please Signup`);
+      setErrorMessage(`${doesUserExist.message}, Please Signup`);
       return;
     }
-    
+
     try {
       const response = await axios.post(`${API_URL}/auth/login`, {
         email,
@@ -31,23 +36,28 @@ const LoginPage = () => {
         return error.response.data;
       }
       console.error("Error logging in:", error);
+      const errorMsg = "An unexpected error occurred. Please try again.";
+      setErrorMessage(errorMsg);
       throw error;
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
 
-    const res = await login();
-    if (res.IsSuccess) {
-      alert("Login Successful");
-      // navigate("/");
-    } else {
-      alert(`${res.message}, Please try again`);
+    try {
+      const res = await login();
+      if (res?.IsSuccess) {
+        setSuccessMessage("Login Successful! Redirecting...");
+        setTimeout(() => navigate("/"), 2000);
+      } else {
+        setErrorMessage(res?.message || "Login failed. Please try again.");
+      }
+    } catch {
+      // Error already set in login function
     }
-
-    // After successful login, navigate to dashboard
-    // navigate("/");
   };
 
   return (
@@ -161,6 +171,26 @@ const LoginPage = () => {
           >
             Sign In
           </button>
+
+          {/* Error Message Display */}
+          {errorMessage && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600 flex items-start">
+                <span className="mr-2">⚠️</span>
+                <span>{errorMessage}</span>
+              </p>
+            </div>
+          )}
+
+          {/* Success Message Display */}
+          {successMessage && (
+            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-600 flex items-start">
+                <span className="mr-2">✓</span>
+                <span>{successMessage}</span>
+              </p>
+            </div>
+          )}
         </form>
 
         {/* Back to Home */}
