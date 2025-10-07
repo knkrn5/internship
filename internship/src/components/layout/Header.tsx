@@ -1,14 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, Bell, MessageCircle, User, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface HeaderProps {
   isLoggedIn?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ isLoggedIn = false }) => {
+const Header = ({ isLoggedIn }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const getUserData = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/auth/user-data`, {
+        withCredentials: true,
+      });
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">

@@ -40,7 +40,23 @@ export class AuthController {
             const { email, password } = req.body;
             const user = await UserService.login(email, password);
             console.log(user.data.accessToken)
-            res.cookie('accessToken', user.data?.accessToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
+            res.cookie('accessToken', user.data.accessToken, { httpOnly: true, secure: false, sameSite: 'lax' });
+            return res.status(user.statusCode).json(user);
+        } catch (error) {
+            if (error instanceof ApiResponse) {
+                return res.status(error.statusCode).json(error);
+            }
+            return res.status(500).json(new ApiResponse(500, false, 'Internal Server Error', null));
+        }
+    }
+
+    static async getUserData(req: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
+        try {
+            console.log("controller endpoint hit");
+            const accessToken = req.cookies.accessToken;
+            console.log("accessToken", accessToken)
+
+            const user = await UserService.getUserData(accessToken);
             return res.status(user.statusCode).json(user);
         } catch (error) {
             if (error instanceof ApiResponse) {
