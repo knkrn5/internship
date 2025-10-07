@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { verifyEmail } from "../../utils/authUtils";
 
 const SignupPage: React.FC = () => {
   const [firstName, setFirstName] = useState("");
@@ -13,12 +14,11 @@ const SignupPage: React.FC = () => {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
+    const doesEmailExist = await verifyEmail(email);
+    console.log(doesEmailExist);
+
     // Handle signup logic here
     console.log("Signup attempt:", {
       firstName,
@@ -28,7 +28,7 @@ const SignupPage: React.FC = () => {
       agreeToTerms,
     });
     // After successful signup, navigate to dashboard
-    navigate("/");
+    // navigate("/");
   };
 
   return (

@@ -11,3 +11,18 @@ export function testapi() {
             console.error('Error fetching data:', error);
         });
 }
+
+export const verifyEmail = async (email: string) => {
+    try {
+        const response = await axios.post(`${API_URL}/auth/verify-email`, {
+            email,
+        });
+        return response.data;
+    } catch (error) {
+        if (error instanceof axios.AxiosError && error.response) {
+            return error.response.data;
+        }
+        console.error('Error verifying email:', error);
+        throw error;
+    }
+};

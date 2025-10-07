@@ -1,10 +1,25 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/auth.service";
 import ApiResponse from "../dtos/apiResponse";
-import { promises } from "dns";
 
 
 export class AuthController {
+
+    static async findByEmail(req: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
+        try {
+            const email = req.body.email;
+            console.log(email);
+
+            const user = await UserService.findByEmail(email);
+            return res.status(user.statusCode).json(user);
+        } catch (error) {
+            if (error instanceof ApiResponse) {
+                return res.status(error.statusCode).json(error);
+            }
+            return res.status(500).json(new ApiResponse(500, false, 'Internal Server Error', null));
+        }
+    }
+
     static async register(req: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
         try {
             // console.log("Register endpoint hit with body:", req.body);
