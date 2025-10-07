@@ -7,11 +7,6 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const SignupPage: React.FC = () => {
-  // const [firstName, setFirstName] = useState("");
-  // const [lastName, setLastName] = useState("");
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [confirmPassword, setConfirmPassword] = useState("");
 
   const [userData, setUserData] = useState({
     firstName: "",
@@ -108,13 +103,6 @@ const SignupPage: React.FC = () => {
               Sign in here!
             </Link>
           </p>
-        </div>
-
-        {/* Illustration */}
-        <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-blue-100 rounded-2xl flex items-center justify-center">
-            <div className="text-3xl">🚀</div>
-          </div>
         </div>
 
         {/* Form */}
@@ -290,7 +278,7 @@ const SignupPage: React.FC = () => {
 
           {/* Error Message Display */}
           {errorMessage && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-sm text-red-600 flex items-start">
                 <span className="mr-2">⚠️</span>
                 <span>{errorMessage}</span>

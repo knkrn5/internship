@@ -84,13 +84,32 @@ export class UserService {
         if (!accessToken) {
             return new ApiResponse(401, false, "Access token is required", null);
         }
-        const decodedToken = jwt.verify(accessToken, 'karantest') as JwtPayload;
-        // console.log(decodedToken)
-        const userId = decodedToken.userId;
-        const user = await userModel.findById(userId).select('-password');
-        if (!user) {
-            return new ApiResponse(404, false, "User not found", null);
+
+        try {
+            const decodedToken = jwt.verify(accessToken, 'karantest') as JwtPayload;
+            const userId = decodedToken.userId;
+
+            const user = await userModel.findById(userId).select('-password');
+            if (!user) {
+                return new ApiResponse(404, false, "User not found", null);
+            }
+
+            return new ApiResponse(200, true, "User data retrieved successfully", user);
+        } catch (error: any) {
+            console.error("Error verifying token:", error);
+
+            // JWT specific errors
+            if (error?.name === 'TokenExpiredError') {
+                return new ApiResponse(401, false, "Token expired", null);
+            }
+
+            if (error?.name === 'JsonWebTokenError') {
+                return new ApiResponse(401, false, "Invalid token", null);
+            }
+
+            return new ApiResponse(500, false, "Failed to verify token", {
+                message: error?.message ?? 'Unknown error'
+            });
         }
-        return new ApiResponse(200, true, "User data retrieved successfully", user);
     }
 }

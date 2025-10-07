@@ -1,6 +1,7 @@
 // import dotenv from 'dotenv'
 // dotenv.config({ quiet: true })
 import express, { Request, Response } from 'express'
+import cookieParser from 'cookie-parser'
 
 
 import cors from 'cors'
@@ -27,6 +28,7 @@ const dynamicCorsOptions = function (req: Request, callback: (err: any, options?
 
 app.use(cors(dynamicCorsOptions))
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/auth', authRouter)
