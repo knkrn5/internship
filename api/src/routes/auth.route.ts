@@ -6,5 +6,6 @@ const router = Router();
 
 router.post("/verify-email/", AuthController.findByEmail);
 router.post("/register", AuthController.register);
+router.post("/login", AuthController.login);
 
 export { router as authRouter };
