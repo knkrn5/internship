@@ -14,7 +14,7 @@ interface SidebarProps {
   isLoggedIn?: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isLoggedIn = false }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isLoggedIn = true }) => {
   const menuItems = [
     { icon: Users, label: "Groups", count: 5, active: true },
     { icon: Calendar, label: "Events", count: 3 },

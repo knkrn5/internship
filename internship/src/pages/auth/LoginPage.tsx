@@ -55,7 +55,7 @@ const LoginPage = () => {
       const res = await login();
       if (res?.IsSuccess) {
         setSuccessMessage("Login Successful! Redirecting...");
-        // setTimeout(() => navigate("/"), 2000);
+        setTimeout(() => navigate("/"), 1000);
       } else {
         setErrorMessage(res?.message || "Login failed. Please try again.");
       }

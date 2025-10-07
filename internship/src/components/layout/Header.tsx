@@ -13,23 +13,6 @@ const Header = ({ isLoggedIn }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const getUserData = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/auth/user-data`, {
-        withCredentials: true,
-      });
-      console.log(response.data);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      return null;
-    }
-  };
-
-  useEffect(() => {
-    getUserData();
-  }, []);
-
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

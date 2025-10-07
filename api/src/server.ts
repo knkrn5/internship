@@ -39,7 +39,7 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 app.get('/health', (req: Request, res: Response) => {
-  res.send('OK')
+  res.send('✅OK')
 })
 
 app.use((req: Request, res: Response) => {
