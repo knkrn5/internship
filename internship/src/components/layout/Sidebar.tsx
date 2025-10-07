@@ -5,8 +5,6 @@ import {
   BookOpen,
   Briefcase,
   User,
-  Settings,
-  LogOut,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -22,16 +20,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isLoggedIn, userName }) => {
     { icon: BookOpen, label: "Education", count: 8 },
     { icon: Briefcase, label: "Jobs", count: 12 },
   ];
-
-  const accountItems = [
-    { icon: User, label: "Profile" },
-    { icon: Settings, label: "Settings" },
-    { icon: LogOut, label: "Logout" },
-  ];
-
-  // if (!isLoggedIn) {
-  //   return null;
-  // }
 
   return (
     <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 lg:pt-16 lg:bg-white lg:border-r lg:border-gray-200">

@@ -64,4 +64,16 @@ export class AuthController {
             return res.status(500).json(new ApiResponse(500, false, 'Internal Server Error', null));
         }
     }
+
+    static async logout(req: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
+        try {
+            res.clearCookie('accessToken', { httpOnly: true, secure: true, sameSite: 'lax' });
+            return res.status(200).json(new ApiResponse(200, true, 'Logged out successfully', null));
+        } catch (error) {
+            if (error instanceof ApiResponse) {
+                return res.status(error.statusCode).json(error);
+            }
+            return res.status(500).json(new ApiResponse(500, false, 'Internal Server Error', null));
+        }
+    }
 }
