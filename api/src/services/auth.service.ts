@@ -68,12 +68,14 @@ export class UserService {
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
-        console.log(passwordMatch);
         if (!passwordMatch) {
             return new ApiResponse(401, false, "Invalid credentials", null);
         }
 
         const accessToken = jwt.sign({ userId: user._id, email: user.email }, 'karantest', { expiresIn: '1h' });
+
+        const decodedToken = jwt.verify(accessToken, 'karantest') as JwtPayload;
+        console.log("decodedToken", decodedToken);
 
         return new ApiResponse(200, true, "Login successful", { user, accessToken });
     }
@@ -82,7 +84,7 @@ export class UserService {
         if (!accessToken) {
             return new ApiResponse(401, false, "Access token is required", null);
         }
-        let decodedToken = jwt.verify(accessToken, 'karantest') as JwtPayload;
+        const decodedToken = jwt.verify(accessToken, 'karantest') as JwtPayload;
         // console.log(decodedToken)
         const userId = decodedToken.userId;
         const user = await userModel.findById(userId).select('-password');
