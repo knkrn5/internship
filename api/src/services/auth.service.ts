@@ -86,7 +86,7 @@ export class UserService {
             const decodedToken = jwt.verify(accessToken, 'karantest') as JwtPayload;
             const userId = decodedToken.userId;
 
-            const user = await userModel.findById(userId).select('-password');
+            const user = await userModel.findById(userId).select('-password -_id -createdAt -updatedAt');
             if (!user) {
                 return new ApiResponse(404, false, "User not found", null);
             }

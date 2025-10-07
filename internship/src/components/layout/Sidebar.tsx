@@ -12,9 +12,10 @@ import { Link } from "react-router-dom";
 
 interface SidebarProps {
   isLoggedIn?: boolean;
+  userName?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isLoggedIn = true }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isLoggedIn, userName }) => {
   const menuItems = [
     { icon: Users, label: "Groups", count: 5, active: true },
     { icon: Calendar, label: "Events", count: 3 },
@@ -74,23 +75,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isLoggedIn = true }) => {
 
             {/* Separator */}
             <div className="border-t border-gray-200 my-4"></div>
-
-            {/* Account Section */}
-            <div className="space-y-1">
-              <h3 className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Account
-              </h3>
-              {accountItems.map((item) => (
-                <a
-                  key={item.label}
-                  href="#"
-                  className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200"
-                >
-                  <item.icon className="text-gray-400 group-hover:text-gray-500 mr-3 h-5 w-5" />
-                  {item.label}
-                </a>
-              ))}
-            </div>
           </nav>
         </div>
 
@@ -104,12 +88,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isLoggedIn = true }) => {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-700">
-                {isLoggedIn ? "John Doe" : "Guest"}
+                {isLoggedIn ? userName : "Guest"}
               </p>
               {isLoggedIn ? (
                 <button
                   type="button"
-                  className="text-xs font-medium text-gray-500"
+                  className="text-xs text-blue-500 font-medium hover:bg-gray-300  rounded-lg transition-colors duration-200 cursor-pointer"
                 >
                   View profile
                 </button>

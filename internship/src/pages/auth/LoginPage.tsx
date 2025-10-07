@@ -61,7 +61,6 @@ const LoginPage = () => {
 
     try {
       const res = await login();
-      console.log("login response:", res);
       if (res?.IsSuccess) {
         setSuccessMessage("Login Successful! Redirecting...");
         setTimeout(() => navigate("/"), 1000);
@@ -165,7 +164,7 @@ const LoginPage = () => {
           {/* Sign In Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 cursor-pointer"
           >
             Sign In
           </button>

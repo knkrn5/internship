@@ -40,7 +40,7 @@ export class AuthController {
             const { email, password } = req.body;
             const user = await UserService.login(email, password);
             if (user.IsSuccess && user.data?.accessToken) {
-                res.cookie('accessToken', user.data.accessToken, { httpOnly: true, secure: false, sameSite: 'lax' });
+                res.cookie('accessToken', user.data.accessToken, { httpOnly: true, secure: true, sameSite: 'lax' });
             }
             return res.status(user.statusCode).json(user);
         } catch (error) {

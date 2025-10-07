@@ -11,14 +11,21 @@ const API_URL = import.meta.env.VITE_API_URL;
 const DashboardPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
+  const [userData, setUserData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+  });
+
   const getUserData = async () => {
     try {
       const response = await axios.get(`${API_URL}/auth/user-data`, {
         withCredentials: true,
       });
-      console.log(response.data);
+      // console.log(response.data.data);
       if (response.data.IsSuccess) {
         setIsLoggedIn(true);
+        setUserData(response.data.data);
       }
       return response.data;
     } catch (error) {
@@ -39,7 +46,7 @@ const DashboardPage: React.FC = () => {
       {/* Main Layout */}
       <div className="flex">
         {/* Left Sidebar */}
-        <Sidebar isLoggedIn={isLoggedIn} />
+        <Sidebar isLoggedIn={isLoggedIn} userName={userData.firstName} />
 
         {/* Main Content */}
         <Feed isLoggedIn={isLoggedIn} />
