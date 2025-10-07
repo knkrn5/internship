@@ -56,17 +56,25 @@ const SignupPage: React.FC = () => {
       return;
     }
 
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(userData.password)) {
+      alert(
+        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
+      );
+      return;
+    }
+
     if (userData.password !== userData.confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
 
     const res = await registerUser();
-    if(res.IsSuccess){
+    if (res.IsSuccess) {
       alert("Registration Successful, Please Login");
       navigate("/login");
     }
-
   };
 
   return (

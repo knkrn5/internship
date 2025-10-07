@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { verifyEmail } from "../../utils/authUtils";
+import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -11,10 +13,39 @@ const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const login = async () => {
+    const doesUserExist = await verifyEmail(email);
+    if (!doesUserExist.IsSuccess) {
+      alert(`${doesUserExist.message}, Please Signup`);
+      return;
+    }
+    
+    try {
+      const response = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        password,
+      });
+      return response.data;
+    } catch (error) {
+      if (error instanceof axios.AxiosError && error.response) {
+        return error.response.data;
+      }
+      console.error("Error logging in:", error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Login attempt:", { email, password, rememberMe });
+    const res = await login();
+    if (res.IsSuccess) {
+      alert("Login Successful");
+      // navigate("/");
+    } else {
+      alert(`${res.message}, Please try again`);
+    }
+
     // After successful login, navigate to dashboard
     // navigate("/");
   };
