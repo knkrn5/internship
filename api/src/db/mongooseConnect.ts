@@ -5,7 +5,8 @@ dotenv.config({ quiet: true });
 
 const uri = process.env.MONGO_DB_URI as string;
 
-async function main() {
+// (IIFE) to connect to the database
+(async function connectDb() {
     mongoose.connection.on("connected", () => {
         console.log("✅ MongoDB Driver connected to MongoDB TCP Server", mongoose.connection.name);
     });
@@ -19,15 +20,10 @@ async function main() {
     });
 
     try {
-        // Connect to MongoDb Database
         const res = await mongoose.connect(uri);
         console.log("Database connection ready", res.connection.name, res.connection.host, res.connection.port);
 
     } catch (err) {
         console.error("❌ Failed to connect to MongoDB:", err);
     }
-}
-
-main().catch((err) => {
-    console.error("Unhandled exception in main():", err);
-});
+}());
