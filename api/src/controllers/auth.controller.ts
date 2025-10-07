@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import { UserService } from "../services/auth.service";
 import ApiResponse from "../dtos/apiResponse";
 
@@ -39,7 +39,9 @@ export class AuthController {
         try {
             const { email, password } = req.body;
             const user = await UserService.login(email, password);
-            res.cookie('accessToken', user.data.accessToken, { httpOnly: true, secure: false, sameSite: 'lax' });
+            if (user.IsSuccess && user.data?.accessToken) {
+                res.cookie('accessToken', user.data.accessToken, { httpOnly: true, secure: false, sameSite: 'lax' });
+            }
             return res.status(user.statusCode).json(user);
         } catch (error) {
             if (error instanceof ApiResponse) {
@@ -51,9 +53,7 @@ export class AuthController {
 
     static async getUserData(req: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
         try {
-            console.log("controller endpoint hit");
             const accessToken = req.cookies.accessToken;
-            console.log("accessToken", accessToken)
 
             const user = await UserService.getUserData(accessToken);
             return res.status(user.statusCode).json(user);

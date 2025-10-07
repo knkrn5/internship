@@ -10,7 +10,6 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
   const navigate = useNavigate();
@@ -18,12 +17,6 @@ const LoginPage = () => {
   const login = async () => {
     setErrorMessage("");
     setSuccessMessage("");
-
-    const doesUserExist = await verifyEmail(email);
-    if (!doesUserExist.IsSuccess) {
-      setErrorMessage(`${doesUserExist.message}, Please Signup`);
-      return;
-    }
 
     try {
       const response = await axios.post(
@@ -34,9 +27,11 @@ const LoginPage = () => {
         },
         { withCredentials: true }
       );
+      console.log("login res1", response.data);
       return response.data;
     } catch (error) {
       if (error instanceof axios.AxiosError && error.response) {
+        console.log("login1 error", error.response.data);
         return error.response.data;
       }
       console.error("Error logging in:", error);
@@ -51,8 +46,22 @@ const LoginPage = () => {
     setErrorMessage("");
     setSuccessMessage("");
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
+
+    const doesUserExist = await verifyEmail(email);
+    console.log(doesUserExist.IsSuccess);
+    if (!doesUserExist.IsSuccess) {
+      setErrorMessage(`${doesUserExist.message}, Please Signup`);
+      return;
+    }
+
     try {
       const res = await login();
+      console.log("login response:", res);
       if (res?.IsSuccess) {
         setSuccessMessage("Login Successful! Redirecting...");
         setTimeout(() => navigate("/"), 1000);
@@ -143,21 +152,6 @@ const LoginPage = () => {
 
           {/* Remember Me & Forgot Password */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-700"
-              >
-                Remember me
-              </label>
-            </div>
             <div className="text-sm">
               <button
                 type="button"

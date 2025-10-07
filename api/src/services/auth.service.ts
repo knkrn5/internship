@@ -74,9 +74,6 @@ export class UserService {
 
         const accessToken = jwt.sign({ userId: user._id, email: user.email }, 'karantest', { expiresIn: '1h' });
 
-        const decodedToken = jwt.verify(accessToken, 'karantest') as JwtPayload;
-        console.log("decodedToken", decodedToken);
-
         return new ApiResponse(200, true, "Login successful", { user, accessToken });
     }
 
