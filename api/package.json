@@ -3,12 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "main": "src/server.ts",
-  "scriptsss": {
-    "dev": "node --loader ts-node/esm src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "scripts": {
     "dev": "node --import ./ts-node-register.mjs src/server.ts",
     "legacy": "node --loader ts-node/esm src/server.ts",
