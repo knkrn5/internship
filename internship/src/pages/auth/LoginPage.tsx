@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { testapi } from "../../utils/authUtils";
+import { verifyEmail } from "../../utils/authUtils";
 
 
 const LoginPage = () => {
@@ -13,7 +13,6 @@ const LoginPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-      testapi();
 
     console.log("Login attempt:", { email, password, rememberMe });
     // After successful login, navigate to dashboard

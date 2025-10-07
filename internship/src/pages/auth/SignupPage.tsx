@@ -2,33 +2,71 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { verifyEmail } from "../../utils/authUtils";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 const SignupPage: React.FC = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  // const [firstName, setFirstName] = useState("");
+  // const [lastName, setLastName] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [userData, setUserData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const navigate = useNavigate();
 
+  const registerUser = async () => {
+    const doesEmailExist = await verifyEmail(userData.email);
+    if (doesEmailExist.IsSuccess) {
+      alert(`${doesEmailExist.message}, Please Login`);
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API_URL}/auth/register`, {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+      });
+      console.log("Registration successful:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error during registration:", error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const doesEmailExist = await verifyEmail(email);
-    console.log(doesEmailExist);
 
-    // Handle signup logic here
-    console.log("Signup attempt:", {
-      firstName,
-      lastName,
-      email,
-      password,
-      agreeToTerms,
-    });
-    // After successful signup, navigate to dashboard
-    // navigate("/");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userData.email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    if (userData.password !== userData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    const res = await registerUser();
+    if(res.IsSuccess){
+      alert("Registration Successful, Please Login");
+      navigate("/login");
+    }
+
   };
 
   return (
@@ -72,8 +110,10 @@ const SignupPage: React.FC = () => {
                 id="firstName"
                 type="text"
                 required
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                value={userData.firstName}
+                onChange={(e) =>
+                  setUserData({ ...userData, firstName: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="John"
               />
@@ -88,9 +128,10 @@ const SignupPage: React.FC = () => {
               <input
                 id="lastName"
                 type="text"
-                required
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                value={userData.lastName}
+                onChange={(e) =>
+                  setUserData({ ...userData, lastName: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Doe"
               />
@@ -107,10 +148,12 @@ const SignupPage: React.FC = () => {
             </label>
             <input
               id="email"
-              type="email"
+              // type="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={userData.email}
+              onChange={(e) =>
+                setUserData({ ...userData, email: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="john.doe@example.com"
             />
@@ -129,8 +172,10 @@ const SignupPage: React.FC = () => {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={userData.password}
+                onChange={(e) =>
+                  setUserData({ ...userData, password: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
                 placeholder="Create a strong password"
               />
@@ -161,8 +206,10 @@ const SignupPage: React.FC = () => {
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={userData.confirmPassword}
+                onChange={(e) =>
+                  setUserData({ ...userData, confirmPassword: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
                 placeholder="Confirm your password"
               />

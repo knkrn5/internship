@@ -18,18 +18,37 @@ export class UserService {
     }
 
     static async register(userData: { firstName: string; lastName: string; email: string; password: string }): Promise<ApiResponse> {
-
-        // const saltRounds = 10;
-        // const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
-        // // userData.password = hashedPassword;
-        // console.log(hashedPassword)
         const user = new userModel(userData);
         try {
             await user.save();
             return new ApiResponse(201, true, "User registered successfully", user);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error registering user:", error);
-            return new ApiResponse(500, false, "Failed to register user", error);
+
+            // Duplicate key (e.g., email unique index) => 409 Conflict
+            if (error?.code === 11000) {
+                return new ApiResponse(
+                    409,
+                    false,
+                    "Email already registered",
+                    { keyValue: error.keyValue }
+                );
+            }
+
+            // Mongoose validation error => 400 Bad Request
+            if (error?.name === 'ValidationError' && error?.errors) {
+                const details = Object.values(error.errors).map((e: any) => ({
+                    path: e?.path,
+                    message: e?.message,
+                }));
+                return new ApiResponse(400, false, "Validation failed", { errors: details });
+            }
+
+            // Fallback: return a serializable message instead of raw Error instance
+            return new ApiResponse(500, false, "Failed to register user", {
+                message: error?.message ?? 'Unknown error',
+                name: error?.name,
+            });
         }
     }
 
