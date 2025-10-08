@@ -20,7 +20,7 @@ export const verifyEmail = async (email: string) => {
 
 export const sendEmailOtp = async (email: string) => {
     try {
-        const response = await axios.post(`${API_URL}/auth/send-otp`, {
+        const response = await axios.post(`${API_URL}/auth/send-email-otp`, {
             email,
         });
         return response.data;
@@ -29,6 +29,22 @@ export const sendEmailOtp = async (email: string) => {
             return error.response.data;
         }
         console.error('Error sending email OTP:', error);
+        throw error;
+    }
+};
+
+export const verifyEmailOtp = async (email: string, enteredOtp: string) => {
+    try {
+        const response = await axios.post(`${API_URL}/auth/verify-email-otp`, {
+            email,
+            enteredOtp,
+        });
+        return response.data;
+    } catch (error) {
+        if (error instanceof axios.AxiosError && error.response) {
+            return error.response.data;
+        }
+        console.error('Error verifying email OTP:', error);
         throw error;
     }
 };

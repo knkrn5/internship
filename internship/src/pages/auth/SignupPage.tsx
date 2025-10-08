@@ -1,23 +1,38 @@
-import React, { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Eye, EyeOff, Loader2, CheckCircle, Mail } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { verifyEmail } from "../../utils/authUtils";
+import {
+  verifyEmail,
+  sendEmailOtp,
+  verifyEmailOtp,
+} from "../../utils/authUtils";
 import axios from "axios";
 import { useAuthCheck } from "../../hooks/useAuthCheck";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const SignupPage: React.FC = () => {
+const SignupPage = () => {
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    otp: "",
+    enteredOtp: "",
     password: "",
     confirmPassword: "",
   });
 
-  const [isOtpSent, setIsOtpSent] = useState<boolean>(false);
+  const [otpStatus, setOtpStatus] = useState({
+    isOtpSent: false,
+    isOtpVerified: false,
+  });
+
+  const [loadingState, setLoadingState] = useState({
+    sendingOtp: false,
+    verifyingOtp: false,
+    registering: false,
+  });
+
+  const [otpTimer, setOtpTimer] = useState(0);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -28,13 +43,78 @@ const SignupPage: React.FC = () => {
 
   const isAuthenticated = useAuthCheck();
 
+  // OTP Timer Effect
+  useEffect(() => {
+    if (otpTimer > 0) {
+      const timer = setTimeout(() => setOtpTimer(otpTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [otpTimer]);
+
+  const handleResendOtp = async () => {
+    setErrorMessage("");
+    setSuccessMessage("");
+    setLoadingState({
+      sendingOtp: true,
+      verifyingOtp: false,
+      registering: false,
+    });
+
+    try {
+      const otpResponse = await sendEmailOtp(userData.email);
+      setLoadingState({
+        sendingOtp: false,
+        verifyingOtp: false,
+        registering: false,
+      });
+
+      if (!otpResponse.IsSuccess) {
+        setErrorMessage(otpResponse.message);
+        return;
+      }
+      setOtpTimer(60); // 60 seconds cooldown
+      setSuccessMessage("OTP resent successfully! Please check your email.");
+      setUserData({ ...userData, enteredOtp: "" }); // Clear previous OTP
+    } catch {
+      setLoadingState({
+        sendingOtp: false,
+        verifyingOtp: false,
+        registering: false,
+      });
+      setErrorMessage("Failed to resend OTP. Please try again.");
+    }
+  };
+
   const registerUser = async () => {
     setErrorMessage("");
     setSuccessMessage("");
+    setLoadingState({
+      sendingOtp: false,
+      verifyingOtp: false,
+      registering: true,
+    });
 
-    const doesEmailExist = await verifyEmail(userData.email);
-    if (doesEmailExist.IsSuccess) {
-      setErrorMessage(`${doesEmailExist.message}, Please Login`);
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(userData.password)) {
+      setErrorMessage(
+        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
+      );
+      setLoadingState({
+        sendingOtp: false,
+        verifyingOtp: false,
+        registering: false,
+      });
+      return;
+    }
+
+    if (userData.password !== userData.confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      setLoadingState({
+        sendingOtp: false,
+        verifyingOtp: false,
+        registering: false,
+      });
       return;
     }
 
@@ -46,6 +126,11 @@ const SignupPage: React.FC = () => {
         password: userData.password,
       });
       console.log("Registration successful:", response.data);
+      setLoadingState({
+        sendingOtp: false,
+        verifyingOtp: false,
+        registering: false,
+      });
       return response.data;
     } catch (error) {
       console.error("Error during registration:", error);
@@ -53,6 +138,11 @@ const SignupPage: React.FC = () => {
         (error as { response?: { data?: { message?: string } } })?.response
           ?.data?.message || "Registration failed. Please try again.";
       setErrorMessage(errorMsg);
+      setLoadingState({
+        sendingOtp: false,
+        verifyingOtp: false,
+        registering: false,
+      });
       throw error;
     }
   };
@@ -68,28 +158,89 @@ const SignupPage: React.FC = () => {
       return;
     }
 
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(userData.password)) {
-      setErrorMessage(
-        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
-      );
-      return;
-    }
-
-    if (userData.password !== userData.confirmPassword) {
-      setErrorMessage("Passwords do not match.");
+    const doesEmailExist = await verifyEmail(userData.email);
+    if (doesEmailExist.IsSuccess) {
+      setErrorMessage(`${doesEmailExist.message}, Please Login`);
+      setLoadingState({
+        sendingOtp: false,
+        verifyingOtp: false,
+        registering: false,
+      });
       return;
     }
 
     try {
-      const res = await registerUser();
-      if (res?.IsSuccess) {
-        setSuccessMessage("Registration Successful! Redirecting to login...");
-        setTimeout(() => navigate("/login"), 2000);
+      if (!otpStatus.isOtpSent) {
+        setLoadingState({
+          sendingOtp: true,
+          verifyingOtp: false,
+          registering: false,
+        });
+        const otpResponse = await sendEmailOtp(userData.email);
+        setLoadingState({
+          sendingOtp: false,
+          verifyingOtp: false,
+          registering: false,
+        });
+
+        if (!otpResponse.IsSuccess) {
+          setErrorMessage(otpResponse.message);
+          return;
+        }
+        setOtpStatus({ ...otpStatus, isOtpSent: true });
+        setOtpTimer(60); // Start 60 second cooldown
+        setSuccessMessage(
+          "OTP sent successfully to your email! Please check your inbox."
+        );
+        return;
+      }
+
+      if (otpStatus.isOtpSent && !otpStatus.isOtpVerified) {
+        if (!userData.enteredOtp || userData.enteredOtp.length !== 6) {
+          setErrorMessage("Please enter a valid 6-digit OTP.");
+          return;
+        }
+
+        setLoadingState({
+          sendingOtp: false,
+          verifyingOtp: true,
+          registering: false,
+        });
+        const otpResponse = await verifyEmailOtp(
+          userData.email,
+          userData.enteredOtp
+        );
+        setLoadingState({
+          sendingOtp: false,
+          verifyingOtp: false,
+          registering: false,
+        });
+
+        if (!otpResponse.IsSuccess) {
+          setErrorMessage(otpResponse.message);
+          return;
+        }
+        setOtpStatus({ ...otpStatus, isOtpVerified: true });
+        setSuccessMessage(
+          "OTP verified successfully! Please set your password."
+        );
+        return;
+      }
+
+      if (otpStatus.isOtpVerified) {
+        const res = await registerUser();
+        if (res?.IsSuccess) {
+          setSuccessMessage("Registration Successful! Redirecting to login...");
+          setTimeout(() => navigate("/login"), 2000);
+        }
       }
     } catch {
-      // Error already set in registerUser
+      // Error already set in respective functions
+      setLoadingState({
+        sendingOtp: false,
+        verifyingOtp: false,
+        registering: false,
+      });
     }
   };
 
@@ -114,6 +265,68 @@ const SignupPage: React.FC = () => {
               Sign in here!
             </Link>
           </p>
+        </div>
+
+        {/* Progress Indicator */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col items-center flex-1">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  !otpStatus.isOtpSent
+                    ? "bg-blue-600 text-white"
+                    : "bg-green-500 text-white"
+                }`}
+              >
+                {otpStatus.isOtpSent ? (
+                  <CheckCircle className="h-5 w-5" />
+                ) : (
+                  "1"
+                )}
+              </div>
+              <span className="text-xs mt-1 text-gray-600">Send OTP</span>
+            </div>
+            <div
+              className={`h-1 flex-1 ${
+                otpStatus.isOtpSent ? "bg-green-500" : "bg-gray-200"
+              }`}
+            ></div>
+            <div className="flex flex-col items-center flex-1">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  !otpStatus.isOtpSent
+                    ? "bg-gray-200 text-gray-400"
+                    : !otpStatus.isOtpVerified
+                    ? "bg-blue-600 text-white"
+                    : "bg-green-500 text-white"
+                }`}
+              >
+                {otpStatus.isOtpVerified ? (
+                  <CheckCircle className="h-5 w-5" />
+                ) : (
+                  "2"
+                )}
+              </div>
+              <span className="text-xs mt-1 text-gray-600">Verify OTP</span>
+            </div>
+            <div
+              className={`h-1 flex-1 ${
+                otpStatus.isOtpVerified ? "bg-green-500" : "bg-gray-200"
+              }`}
+            ></div>
+            <div className="flex flex-col items-center flex-1">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  !otpStatus.isOtpVerified
+                    ? "bg-gray-200 text-gray-400"
+                    : "bg-blue-600 text-white"
+                }`}
+              >
+                3
+              </div>
+              <span className="text-xs mt-1 text-gray-600">Register</span>
+            </div>
+          </div>
         </div>
 
         {/* Form */}
@@ -181,72 +394,130 @@ const SignupPage: React.FC = () => {
           </div>
 
           {/* Password */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                required
-                value={userData.password}
-                onChange={(e) =>
-                  setUserData({ ...userData, password: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
-                placeholder="Create a strong password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4 text-gray-400" />
-                ) : (
-                  <Eye className="h-4 w-4 text-gray-400" />
-                )}
-              </button>
-            </div>
-          </div>
+          {otpStatus.isOtpVerified ? (
+            <>
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={userData.password}
+                    onChange={(e) =>
+                      setUserData({ ...userData, password: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+                    placeholder="Create a strong password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+              </div>
 
-          {/* Confirm Password */}
-          <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Confirm Password
-            </label>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                required
-                value={userData.confirmPassword}
-                onChange={(e) =>
-                  setUserData({ ...userData, confirmPassword: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
-                placeholder="Confirm your password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    value={userData.confirmPassword}
+                    onChange={(e) =>
+                      setUserData({
+                        ...userData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+                    placeholder="Confirm your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div>
+              <label
+                htmlFor="otp"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
-                {showConfirmPassword ? (
-                  <EyeOff className="h-4 w-4 text-gray-400" />
-                ) : (
-                  <Eye className="h-4 w-4 text-gray-400" />
+                OTP{" "}
+                {otpStatus.isOtpSent && (
+                  <span className="text-green-600">(Sent ✓)</span>
                 )}
-              </button>
+              </label>
+              <div className="relative">
+                <input
+                  id="otp"
+                  type="text"
+                  required
+                  disabled={!otpStatus.isOtpSent}
+                  value={userData.enteredOtp}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    setUserData({ ...userData, enteredOtp: value });
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:bg-gray-100"
+                  placeholder={
+                    otpStatus.isOtpSent
+                      ? "Enter 6-digit OTP"
+                      : "Click 'Send OTP' first"
+                  }
+                  maxLength={6}
+                />
+                {otpStatus.isOtpSent && (
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <Mail className="h-4 w-4 text-green-500" />
+                  </div>
+                )}
+              </div>
+              {otpStatus.isOtpSent && (
+                <div className="mt-2 flex items-center justify-between">
+                  <p className="text-xs text-gray-500">
+                    OTP valid for 5 minutes. Check your email inbox/spam folder.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={otpTimer > 0 || loadingState.sendingOtp}
+                    className="text-xs text-blue-600 hover:text-blue-700 disabled:text-gray-400 disabled:cursor-not-allowed font-medium"
+                  >
+                    {otpTimer > 0 ? `Resend in ${otpTimer}s` : "Resend OTP"}
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
+          )}
 
           {/* Terms and Conditions */}
           <div className="flex items-start">
@@ -282,9 +553,35 @@ const SignupPage: React.FC = () => {
           {/* Sign Up Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 cursor-pointer"
+            disabled={
+              loadingState.sendingOtp ||
+              loadingState.verifyingOtp ||
+              loadingState.registering
+            }
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            Create Account
+            {loadingState.sendingOtp ? (
+              <>
+                <Loader2 className="animate-spin h-5 w-5 mr-2" />
+                Sending OTP...
+              </>
+            ) : loadingState.verifyingOtp ? (
+              <>
+                <Loader2 className="animate-spin h-5 w-5 mr-2" />
+                Verifying OTP...
+              </>
+            ) : loadingState.registering ? (
+              <>
+                <Loader2 className="animate-spin h-5 w-5 mr-2" />
+                Creating Account...
+              </>
+            ) : !otpStatus.isOtpSent ? (
+              "Send OTP"
+            ) : otpStatus.isOtpSent && !otpStatus.isOtpVerified ? (
+              "Verify OTP"
+            ) : (
+              "Create Account"
+            )}
           </button>
 
           {/* Error Message Display */}
