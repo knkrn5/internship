@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { sendMailOtp } from "../utils/emailer.js";
 import { redisClient } from "../db/redisConnect.js";
-
+import { devNull } from "node:os";
 
 
 export class UserService {
@@ -30,11 +30,10 @@ export class UserService {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const hashedOtp = await bcrypt.hash(otp, 10);
 
-        redisClient.set(receiverEmail, hashedOtp, { EX: 300 });
-        console.log(hashedOtp)
+        await redisClient.set(receiverEmail, hashedOtp, { EX: 300 });
 
-        const res = await sendMailOtp(receiverEmail, `${otp} Your OTP Code`, `Your OTP code is ${otp}`);
-        return new ApiResponse(200, true, "OTP sent successfully", res);
+        await sendMailOtp(receiverEmail, `${otp} Your OTP Code`, `Your OTP code is ${otp}`);
+        return new ApiResponse(200, true, "OTP sent successfully", devNull);
 
     }
 

@@ -12,9 +12,12 @@ const SignupPage: React.FC = () => {
     firstName: "",
     lastName: "",
     email: "",
+    otp: "",
     password: "",
     confirmPassword: "",
   });
+
+  const [isOtpSent, setIsOtpSent] = useState<boolean>(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

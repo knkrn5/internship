@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 import RightSidebar from "../components/layout/RightSidebar";
@@ -7,7 +7,7 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const DashboardPage: React.FC = () => {
+const DashboardPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const [userData, setUserData] = useState({
