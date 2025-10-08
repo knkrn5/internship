@@ -45,7 +45,7 @@ const DashboardPage = () => {
       {/* Main Layout */}
       <div className="flex">
         {/* Left Sidebar */}
-        <Sidebar isLoggedIn={isLoggedIn} userName={`${userData.firstName} ${userData.lastName}`} />
+        <Sidebar isLoggedIn={isLoggedIn} userName={`${userData.firstName} ${userData.lastName ? userData.lastName : ""}`} />
 
         {/* Main Content */}
         <Feed />

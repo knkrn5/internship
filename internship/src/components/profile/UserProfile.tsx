@@ -28,7 +28,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ userData, isLoggedIn }) => {
   }
 
   const { firstName, lastName, email } = userData;
-  const fullName = `${firstName} ${lastName}`.trim() || "User";
+  const fullName = `${firstName} ${lastName ? lastName : ""}`.trim() || "User";
   const initials = `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase() || "U";
 
   return (
