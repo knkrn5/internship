@@ -92,9 +92,13 @@ const Header = ({ isLoggedIn, userData }: HeaderProps) => {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="flex items-center">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                <button
+                  type="button"
+                  className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3 cursor-pointer"
+                  onClick={() => navigate("/")}
+                >
                   <span className="text-white font-bold text-sm">A</span>
-                </div>
+                </button>
                 <span className="text-xl font-bold text-gray-900">
                   ATOMWORLD
                 </span>

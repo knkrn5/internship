@@ -79,12 +79,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isLoggedIn, userName }) => {
                 {isLoggedIn ? userName : "Guest"}
               </p>
               {isLoggedIn ? (
-                <button
-                  type="button"
-                  className="text-xs text-blue-500 font-medium hover:bg-gray-300  rounded-lg transition-colors duration-200 cursor-pointer"
+                <Link
+                  to="/profile"
+                  className="text-xs text-blue-500 font-medium hover:text-blue-700 transition-colors duration-200 cursor-pointer"
                 >
                   View profile
-                </button>
+                </Link>
               ) : (
                 <Link
                   to="/signup"
