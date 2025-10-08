@@ -189,7 +189,7 @@ const Header = ({ isLoggedIn, userData }: HeaderProps) => {
                         <button
                           type="button"
                           onClick={handleLogout}
-                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
                         >
                           <LogOut className="h-4 w-4 mr-3" />
                           Logout

@@ -27,13 +27,26 @@ export class UserService {
             return new ApiResponse(400, false, "Email is required", null);
         }
 
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const hashedOtp = await bcrypt.hash(otp, 10);
+        // Check if Redis is connected
+        if (!redisClient.isOpen) {
+            console.error("❌ Redis is not connected");
+            return new ApiResponse(503, false, "Service temporarily unavailable. Please try again later.", null);
+        }
 
-        await redisClient.set(receiverEmail, hashedOtp, { EX: 300 });
+        try {
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            const hashedOtp = await bcrypt.hash(otp, 10);
 
-        await sendMailOtp(receiverEmail, `${otp} Your OTP Code`, `Your OTP code is ${otp}`);
-        return new ApiResponse(200, true, "OTP sent successfully", devNull);
+            await redisClient.set(receiverEmail, hashedOtp, { EX: 300 });
+
+            await sendMailOtp(receiverEmail, `${otp} Your OTP Code`, `Your OTP code is ${otp}`);
+            return new ApiResponse(200, true, "OTP sent successfully", devNull);
+        } catch (error: any) {
+            console.error("❌ Error in sendEmailOtp:", error);
+            return new ApiResponse(500, false, "Failed to send OTP. Please try again.", {
+                message: error?.message ?? 'Unknown error'
+            });
+        }
 
     }
 
@@ -45,16 +58,29 @@ export class UserService {
             return new ApiResponse(400, false, "OTP is required", null);
         }
 
-        const storedOtp = await redisClient.get(receiverEmail);
-        if (!storedOtp) {
-            return new ApiResponse(400, false, "OTP Expired, Please send again", null);
+        // Check if Redis is connected
+        if (!redisClient.isOpen) {
+            console.error("❌ Redis is not connected");
+            return new ApiResponse(503, false, "Service temporarily unavailable. Please try again later.", null);
         }
-        const isMatch = await bcrypt.compare(enteredOtp, storedOtp);
-        if (isMatch) {
-            redisClient.del(receiverEmail);
-            return new ApiResponse(200, true, "OTP verified successfully", null);
-        } else {
-            return new ApiResponse(400, false, "Invalid OTP", null);
+
+        try {
+            const storedOtp = await redisClient.get(receiverEmail);
+            if (!storedOtp) {
+                return new ApiResponse(400, false, "OTP expired or not found. Please request a new OTP.", null);
+            }
+            const isMatch = await bcrypt.compare(enteredOtp, storedOtp);
+            if (isMatch) {
+                await redisClient.del(receiverEmail);
+                return new ApiResponse(200, true, "OTP verified successfully", null);
+            } else {
+                return new ApiResponse(400, false, "Invalid OTP. Please check and try again.", null);
+            }
+        } catch (error: any) {
+            console.error("❌ Error in verifyEmailOtp:", error);
+            return new ApiResponse(500, false, "Failed to verify OTP. Please try again.", {
+                message: error?.message ?? 'Unknown error'
+            });
         }
     }
 

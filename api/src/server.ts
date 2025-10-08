@@ -6,7 +6,9 @@ import cookieParser from 'cookie-parser'
 
 import cors from 'cors'
 import './db/mongooseConnect.js';
+import { redisClient } from './db/redisConnect.js';
 import { authRouter } from './routes/auth.route.js';
+import mongoose from 'mongoose';
 
 
 const app = express()
@@ -39,7 +41,17 @@ app.get('/', (_: Request, res: Response) => {
 })
 
 app.get('/health', (_: Request, res: Response) => {
-  res.send('✅OK')
+  const health = {
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    services: {
+      redis: redisClient.isOpen ? 'connected' : 'disconnected',
+      mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    }
+  };
+  
+  const isHealthy = redisClient.isOpen && mongoose.connection.readyState === 1;
+  res.status(isHealthy ? 200 : 503).json(health);
 })
 
 app.use((req: Request, res: Response) => {
