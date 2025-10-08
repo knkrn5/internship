@@ -62,7 +62,7 @@ const SignupPage = () => {
 
     try {
       const otpResponse = await sendEmailOtp(
-        userData.email,
+        userData.email.toLowerCase().trim(),
         "registration to Atomworld"
       );
       setLoadingState({
@@ -125,7 +125,7 @@ const SignupPage = () => {
       const response = await axios.post(`${API_URL}/auth/register`, {
         firstName: userData.firstName,
         lastName: userData.lastName,
-        email: userData.email,
+        email: userData.email.toLowerCase().trim(),
         password: userData.password,
       });
       console.log("Registration successful:", response.data);
@@ -161,7 +161,7 @@ const SignupPage = () => {
       return;
     }
 
-    const doesEmailExist = await verifyEmail(userData.email);
+    const doesEmailExist = await verifyEmail(userData.email.toLowerCase().trim());
     if (doesEmailExist.IsSuccess) {
       setErrorMessage(`${doesEmailExist.message}, Please Login`);
       setLoadingState({
@@ -180,7 +180,7 @@ const SignupPage = () => {
           registering: false,
         });
         const otpResponse = await sendEmailOtp(
-          userData.email,
+          userData.email.toLowerCase().trim(),
           "registration to Atomworld"
         );
         setLoadingState({
@@ -213,7 +213,7 @@ const SignupPage = () => {
           registering: false,
         });
         const otpResponse = await verifyEmailOtp(
-          userData.email,
+          userData.email.toLowerCase().trim(),
           userData.enteredOtp
         );
         setLoadingState({
