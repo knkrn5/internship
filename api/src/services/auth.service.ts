@@ -2,7 +2,7 @@ import ApiResponse from "../dtos/apiResponse.js";
 import userModel from "../models/userModel.js";
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { sendMailOtp } from "../utils/emailer.js";
+import { emailTransporter } from "../utils/emailer.js";
 import { redisClient } from "../db/redisConnect.js";
 import { devNull } from "node:os";
 
@@ -39,7 +39,7 @@ export class UserService {
 
             await redisClient.set(receiverEmail, hashedOtp, { EX: 300 });
 
-            await sendMailOtp(receiverEmail, `${otp} Your OTP Code`, `Your OTP code is ${otp}`);
+            await emailTransporter({ toEmail: receiverEmail, subject: `${otp} Your OTP Code`, content: `Your OTP code is ${otp}` });
             return new ApiResponse(200, true, "OTP sent successfully", devNull);
         } catch (error: any) {
             console.error("❌ Error in sendEmailOtp:", error);

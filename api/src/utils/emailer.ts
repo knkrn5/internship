@@ -1,27 +1,34 @@
-import nodemailer from "nodemailer"
+import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.zoho.in',
-    port: Number(process.env.EMAIL_PORT) || 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-        user: process.env.EMAIL_FROM,
-        pass: process.env.EMAIL_PASS,
-    },
-});
+type EmailPropsTypes = {
+    toEmail: string | string[];
+    subject: string;
+    content: string;
 
+};
 
-// Wrap in an async IIFE so we can use await.
-export const sendMailOtp = async (receiverEmail: string, subject: string, content: string) => {
-    const info = await transporter.sendMail({
-        from: process.env.EMAIL_FROM,
-        to: receiverEmail,
-        subject: subject,
-        text: content,
-        html: `<b>${content}</b>`,
-    });
+export const emailTransporter = async ({
+    toEmail,
+    subject,
+    content,
+}: EmailPropsTypes): Promise<void> => {
+    const transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: Number(process.env.EMAIL_PORT),
+        secure: false, // true for port 465 (SSL), false for port 587 (STARTTLS)
+        auth: {
+            user: process.env.EMAIL_FROM,
+            pass: process.env.EMAIL_PASS,
+        },
+    } as nodemailer.TransportOptions);
 
-    console.log("Message sent:", info);
-    return info
+    const mailOptions = {
+        from: `"Atomworld" <${process.env.EMAIL_FROM}>`,
+        to: toEmail,
+        subject: `${subject} `,
+        text: `${content}`,
+        html: content,
+    };
 
+    await transporter.sendMail(mailOptions);
 };
