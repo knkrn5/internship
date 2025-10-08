@@ -3,6 +3,8 @@ import userModel from "../models/userModel.js";
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { sendMailOtp } from "../utils/emailer.js";
+import { redisClient } from "../db/redisConnect.js";
+
 
 
 export class UserService {
@@ -25,9 +27,36 @@ export class UserService {
             return new ApiResponse(400, false, "Email is required", null);
         }
 
-        await sendMailOtp(receiverEmail);
-        return new ApiResponse(200, true, "OTP sent successfully", null);
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const hashedOtp = await bcrypt.hash(otp, 10);
 
+        redisClient.set(receiverEmail, hashedOtp, { EX: 300 });
+        console.log(hashedOtp)
+
+        const res = await sendMailOtp(receiverEmail, `${otp} Your OTP Code`, `Your OTP code is ${otp}`);
+        return new ApiResponse(200, true, "OTP sent successfully", res);
+
+    }
+
+    static async verifyEmailOtp(receiverEmail: string, enteredOtp: string): Promise<ApiResponse> {
+        if (!receiverEmail) {
+            return new ApiResponse(400, false, "Email is required", null);
+        }
+        if (!enteredOtp) {
+            return new ApiResponse(400, false, "OTP is required", null);
+        }
+
+        const storedOtp = await redisClient.get(receiverEmail);
+        if (!storedOtp) {
+            return new ApiResponse(400, false, "OTP Expired, Please send again", null);
+        }
+        const isMatch = await bcrypt.compare(enteredOtp, storedOtp);
+        if (isMatch) {
+            redisClient.del(receiverEmail);
+            return new ApiResponse(200, true, "OTP verified successfully", null);
+        } else {
+            return new ApiResponse(400, false, "Invalid OTP", null);
+        }
     }
 
     static async register(userData: { firstName: string; lastName: string; email: string; password: string }): Promise<ApiResponse> {
