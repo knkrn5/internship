@@ -95,7 +95,10 @@ export class AuthController {
 
     static async logout(_: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
         try {
-            res.clearCookie('accessToken', { httpOnly: true, secure: true, sameSite: 'lax' });
+            res.clearCookie('accessToken', {
+                httpOnly: true, secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            });
             return res.status(200).json(new ApiResponse(200, true, 'Logged out successfully', null));
         } catch (error) {
             if (error instanceof ApiResponse) {
