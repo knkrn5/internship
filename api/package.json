@@ -7,7 +7,7 @@
     "dev": "node --import ./ts-node-register.mjs src/server.ts",
     "legacy": "node --loader ts-node/esm src/server.ts",
     "devs": "tsx watch src/server.ts",
-    "starts": "tsx src/server.ts",
+    "start-dev": "tsx src/server.ts",
     "dev:watch": "nodemon --watch src --ext ts,json --exec \"node --import ./ts-node-register.mjs\" src/server.ts",
     "dev:nowarn": "set NODE_NO_WARNINGS=1&& node --import ./ts-node-register.mjs src/server.ts",
     "build": "tsc",
