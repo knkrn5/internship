@@ -22,7 +22,6 @@ export class AuthController {
 
     static async register(req: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
         try {
-            // console.log("Register endpoint hit with body:", req.body);
             const { firstName, lastName, email, password } = req.body;
 
             const newUser = await UserService.register({ firstName, lastName, email, password });

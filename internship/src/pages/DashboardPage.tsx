@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 import RightSidebar from "../components/layout/RightSidebar";
 import Feed from "../components/feed/Feed";
 import axios from "axios";
-import { useEffect } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
