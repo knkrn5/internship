@@ -1,10 +1,11 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 type EmailPropsTypes = {
     toEmail: string | string[];
     subject: string;
     content: string;
-
 };
 
 export const emailTransporter = async ({
@@ -12,23 +13,22 @@ export const emailTransporter = async ({
     subject,
     content,
 }: EmailPropsTypes): Promise<void> => {
-    const transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: Number(process.env.EMAIL_PORT),
-        secure: true, // true for port 465 (SSL), false for port 587 (STARTTLS)
-        auth: {
-            user: process.env.EMAIL_FROM,
-            pass: process.env.EMAIL_PASS,
-        },
-    } as nodemailer.TransportOptions);
+    try {
+        const { data, error } = await resend.emails.send({
+            from: 'Atomworld <noreply@karan.email>',
+            to: toEmail,
+            subject: subject,
+            html: content,
+        });
 
-    const mailOptions = {
-        from: `"Atomworld" <${process.env.EMAIL_FROM}>`,
-        to: toEmail,
-        subject: `${subject} `,
-        text: `${content}`,
-        html: content,
-    };
+        if (error) {
+            console.error('❌ Resend error:', error);
+            throw new Error(error.message);
+        }
 
-    await transporter.sendMail(mailOptions);
+        console.log('✅ Email sent successfully:', data?.id);
+    } catch (error: any) {
+        console.error('❌ Failed to send email:', error);
+        throw error;
+    }
 };
