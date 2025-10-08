@@ -1,4 +1,4 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { UserService } from "../services/auth.service";
 import ApiResponse from "../dtos/apiResponse";
 
@@ -65,7 +65,7 @@ export class AuthController {
         }
     }
 
-    static async logout(req: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
+    static async logout(_: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
         try {
             res.clearCookie('accessToken', { httpOnly: true, secure: true, sameSite: 'lax' });
             return res.status(200).json(new ApiResponse(200, true, 'Logged out successfully', null));

@@ -49,10 +49,10 @@ const DashboardPage: React.FC = () => {
         <Sidebar isLoggedIn={isLoggedIn} userName={userData.firstName} />
 
         {/* Main Content */}
-        <Feed isLoggedIn={isLoggedIn} />
+        <Feed />
 
         {/* Right Sidebar */}
-        <RightSidebar isLoggedIn={isLoggedIn} />
+        <RightSidebar />
       </div>
     </div>
   );

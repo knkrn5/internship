@@ -34,11 +34,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/auth', authRouter)
 
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_: Request, res: Response) => {
   res.send('Hello World!')
 })
 
-app.get('/health', (req: Request, res: Response) => {
+app.get('/health', (_: Request, res: Response) => {
   res.send('✅OK')
 })
 

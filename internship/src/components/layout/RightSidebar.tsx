@@ -1,11 +1,7 @@
-import React from "react";
 import { Users, User, MapPin, Calendar } from "lucide-react";
 
-interface RightSidebarProps {
-  isLoggedIn?: boolean;
-}
 
-const RightSidebar = ({ isLoggedIn = false }: RightSidebarProps) => {
+const RightSidebar = () => {
   const recommendations = [
     {
       id: "1",
@@ -61,10 +57,6 @@ const RightSidebar = ({ isLoggedIn = false }: RightSidebarProps) => {
       applicants: 89,
     },
   ];
-
-  // if (!isLoggedIn) {
-  //   return null;
-  // }
 
   return (
     <aside className="hidden xl:flex xl:w-80 xl:flex-col xl:fixed xl:right-0 xl:inset-y-0 xl:pt-16">

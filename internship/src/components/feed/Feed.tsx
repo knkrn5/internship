@@ -1,49 +1,20 @@
-import React, { useState } from 'react';
-import { Filter, ChevronDown } from 'lucide-react';
-import PostCard from './PostCard';
-import { usePosts } from '../../hooks/usePosts';
+import { useState } from "react";
+import { Filter, ChevronDown } from "lucide-react";
+import PostCard from "./PostCard";
+import { usePosts } from "../../hooks/usePosts";
 
-interface FeedProps {
-  isLoggedIn?: boolean;
-}
-
-const Feed: React.FC<FeedProps> = ({ isLoggedIn = true }) => {
-  const [activeFilter, setActiveFilter] = useState('All');
-  const [sortBy, setSortBy] = useState('Recent');
+const Feed = () => {
+  const [activeFilter, setActiveFilter] = useState("All");
+  const [sortBy, setSortBy] = useState("Recent");
   const { posts, loading } = usePosts();
 
-  const filters = ['All', 'Article', 'Event', 'Education', 'Job'];
-  const sortOptions = ['Recent', 'Popular', 'Most Liked'];
+  const filters = ["All", "Article", "Event", "Education", "Job"];
+  const sortOptions = ["Recent", "Popular", "Most Liked"];
 
-  const filteredPosts = posts.filter(post => 
-    activeFilter === 'All' || post.category === activeFilter
+  const filteredPosts = posts.filter(
+    (post) => activeFilter === "All" || post.category === activeFilter
   );
 
-  // if (!isLoggedIn) {
-  //   return (
-  //     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  //       <div className="text-center">
-  //         <h2 className="text-3xl font-bold text-gray-900 mb-4">
-  //           Computer Engineering
-  //         </h2>
-  //         <p className="text-lg text-gray-600 mb-8">
-  //           142,765 Computer Engineers follow this
-  //         </p>
-  //         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-  //           <h3 className="text-xl font-semibold text-gray-900 mb-4">
-  //             Join our community to see the latest posts
-  //           </h3>
-  //           <p className="text-gray-600 mb-6">
-  //             Connect with fellow engineers, share knowledge, and stay updated with the latest in technology.
-  //           </p>
-  //           <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
-  //             Join Group
-  //           </button>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <main className="flex-1 lg:pl-64 xl:pr-80">
@@ -56,13 +27,17 @@ const Feed: React.FC<FeedProps> = ({ isLoggedIn = true }) => {
               alt="Computer Engineering"
               className="w-full h-full object-cover opacity-80"
               onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
+                (e.target as HTMLImageElement).style.display = "none";
               }}
             />
             <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
               <div className="text-center text-white">
-                <h1 className="text-4xl font-bold mb-2">Computer Engineering</h1>
-                <p className="text-lg">142,765 Computer Engineers follow this</p>
+                <h1 className="text-4xl font-bold mb-2">
+                  Computer Engineering
+                </h1>
+                <p className="text-lg">
+                  142,765 Computer Engineers follow this
+                </p>
               </div>
             </div>
             <div className="absolute top-4 right-4 flex space-x-2">
@@ -90,8 +65,8 @@ const Feed: React.FC<FeedProps> = ({ isLoggedIn = true }) => {
                   onClick={() => setActiveFilter(filter)}
                   className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${
                     activeFilter === filter
-                      ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? "bg-blue-100 text-blue-800 border border-blue-200"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
                   {filter}
@@ -127,9 +102,7 @@ const Feed: React.FC<FeedProps> = ({ isLoggedIn = true }) => {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
           ) : (
-            filteredPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))
+            filteredPosts.map((post) => <PostCard key={post.id} post={post} />)
           )}
         </div>
 
