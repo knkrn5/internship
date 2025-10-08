@@ -40,7 +40,10 @@ export class AuthController {
             const { email, password } = req.body;
             const user = await UserService.login(email, password);
             if (user.IsSuccess && user.data?.accessToken) {
-                res.cookie('accessToken', user.data.accessToken, { httpOnly: true, secure: true, sameSite: 'lax' });
+                res.cookie('accessToken', user.data.accessToken, {
+                    httpOnly: true, secure: process.env.NODE_ENV === 'production',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+                });
             }
             return res.status(user.statusCode).json(user);
         } catch (error) {
