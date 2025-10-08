@@ -31,7 +31,6 @@ const LoginPage = () => {
         },
         { withCredentials: true }
       );
-      console.log("login res1", response.data);
       return response.data;
     } catch (error) {
       if (error instanceof axios.AxiosError && error.response) {
