@@ -3,11 +3,11 @@ import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { verifyEmail } from "../../utils/authUtils";
 import axios from "axios";
+import { useAuthCheck } from "../../hooks/useAuthCheck";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const SignupPage: React.FC = () => {
-
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
@@ -23,10 +23,12 @@ const SignupPage: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string>("");
   const navigate = useNavigate();
 
+  const isAuthenticated = useAuthCheck();
+
   const registerUser = async () => {
     setErrorMessage("");
     setSuccessMessage("");
-    
+
     const doesEmailExist = await verifyEmail(userData.email);
     if (doesEmailExist.IsSuccess) {
       setErrorMessage(`${doesEmailExist.message}, Please Login`);
@@ -44,7 +46,9 @@ const SignupPage: React.FC = () => {
       return response.data;
     } catch (error) {
       console.error("Error during registration:", error);
-      const errorMsg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Registration failed. Please try again.";
+      const errorMsg =
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Registration failed. Please try again.";
       setErrorMessage(errorMsg);
       throw error;
     }
@@ -85,6 +89,10 @@ const SignupPage: React.FC = () => {
       // Error already set in registerUser
     }
   };
+
+  if (isAuthenticated) {
+    navigate("/");
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
