@@ -22,7 +22,7 @@ export class UserService {
         return new ApiResponse(200, true, "User Already Exists", user);
     }
 
-    static async sendEmailOtp(receiverEmail: string): Promise<ApiResponse> {
+    static async sendEmailOtp(receiverEmail: string, reason: string): Promise<ApiResponse> {
         if (!receiverEmail) {
             return new ApiResponse(400, false, "Email is required", null);
         }
@@ -39,7 +39,7 @@ export class UserService {
 
             await redisClient.set(receiverEmail, hashedOtp, { EX: 300 });
 
-            await emailTransporter({ toEmail: receiverEmail, subject: `${otp} Your OTP Code`, content: `Your OTP code is ${otp}` });
+            await emailTransporter({ toEmail: receiverEmail, subject: `${otp} Your OTP Code for ${reason}`, content: `Your OTP code is ${otp} for ${reason}` });
             return new ApiResponse(200, true, "OTP sent successfully", devNull);
         } catch (error: any) {
             console.error("❌ Error in sendEmailOtp:", error);
@@ -205,7 +205,6 @@ export class UserService {
             user.password = newPassword;
             await user.save();
 
-            console.log(`✅ Password reset successfully for user: ${email}`);
             return new ApiResponse(200, true, "Password reset successfully", null);
         } catch (error: any) {
             console.error("❌ Error in resetPassword:", error);

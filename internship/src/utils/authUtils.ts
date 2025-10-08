@@ -18,10 +18,11 @@ export const verifyEmail = async (email: string) => {
     }
 };
 
-export const sendEmailOtp = async (email: string) => {
+export const sendEmailOtp = async (email: string, reason: string) => {
     try {
         const response = await axios.post(`${API_URL}/auth/send-email-otp`, {
             email,
+            reason,
         });
         return response.data;
     } catch (error) {

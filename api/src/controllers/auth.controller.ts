@@ -22,8 +22,8 @@ export class AuthController {
 
     static async sendEmailOtp(req: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
         try {
-            const { email } = req.body;
-            const user = await UserService.sendEmailOtp(email);
+            const { email, reason } = req.body;
+            const user = await UserService.sendEmailOtp(email, reason);
             return res.status(user.statusCode).json(user);
         } catch (error) {
             if (error instanceof ApiResponse) {

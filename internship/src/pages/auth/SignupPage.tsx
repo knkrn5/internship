@@ -176,7 +176,10 @@ const SignupPage = () => {
           verifyingOtp: false,
           registering: false,
         });
-        const otpResponse = await sendEmailOtp(userData.email);
+        const otpResponse = await sendEmailOtp(
+          userData.email,
+          "registration to Atomworld"
+        );
         setLoadingState({
           sendingOtp: false,
           verifyingOtp: false,

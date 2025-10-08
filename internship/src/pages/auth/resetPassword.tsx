@@ -60,7 +60,7 @@ const ResetPassword = () => {
     setLoadingState({ sendingOtp: true, verifyingOtp: false, resettingPassword: false });
 
     try {
-      const otpResponse = await sendEmailOtp(formData.email);
+      const otpResponse = await sendEmailOtp(formData.email, "reset-password");
       setLoadingState({ sendingOtp: false, verifyingOtp: false, resettingPassword: false });
 
       if (!otpResponse.IsSuccess) {
@@ -83,7 +83,7 @@ const ResetPassword = () => {
     setLoadingState({ sendingOtp: true, verifyingOtp: false, resettingPassword: false });
 
     try {
-      const otpResponse = await sendEmailOtp(formData.email);
+      const otpResponse = await sendEmailOtp(formData.email, "reset-password");
       setLoadingState({ sendingOtp: false, verifyingOtp: false, resettingPassword: false });
 
       if (!otpResponse.IsSuccess) {
