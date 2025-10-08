@@ -20,6 +20,19 @@ export class AuthController {
         }
     }
 
+    static async sendEmailOtp(req: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
+        try {
+            const { email } = req.body;
+            const user = await UserService.sendEmailOtp(email);
+            return res.status(user.statusCode).json(user);
+        } catch (error) {
+            if (error instanceof ApiResponse) {
+                return res.status(error.statusCode).json(error);
+            }
+            return res.status(500).json(new ApiResponse(500, false, 'Internal Server Error', null));
+        }
+    }
+
     static async register(req: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
         try {
             const { firstName, lastName, email, password } = req.body;

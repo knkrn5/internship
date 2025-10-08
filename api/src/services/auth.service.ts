@@ -2,6 +2,8 @@ import ApiResponse from "../dtos/apiResponse.js";
 import userModel from "../models/userModel.js";
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { sendMailOtp } from "../utils/emailer.js";
+
 
 export class UserService {
 
@@ -16,6 +18,16 @@ export class UserService {
             return new ApiResponse(404, false, "User not found", null);
         }
         return new ApiResponse(200, true, "User Already Exists", user);
+    }
+
+    static async sendEmailOtp(receiverEmail: string): Promise<ApiResponse> {
+        if (!receiverEmail) {
+            return new ApiResponse(400, false, "Email is required", null);
+        }
+
+        await sendMailOtp(receiverEmail);
+        return new ApiResponse(200, true, "OTP sent successfully", null);
+
     }
 
     static async register(userData: { firstName: string; lastName: string; email: string; password: string }): Promise<ApiResponse> {
