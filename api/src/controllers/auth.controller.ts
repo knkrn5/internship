@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { UserService } from "../services/auth.service";
-import ApiResponse from "../dtos/apiResponse";
+import { UserService } from "../services/auth.service.js";
+import ApiResponse from "../dtos/apiResponse.js";
 
 
 export class AuthController {

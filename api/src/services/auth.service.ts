@@ -1,5 +1,5 @@
-import ApiResponse from "../dtos/apiResponse";
-import userModel from "../models/userModel";
+import ApiResponse from "../dtos/apiResponse.js";
+import userModel from "../models/userModel.js";
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 

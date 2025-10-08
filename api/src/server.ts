@@ -5,8 +5,8 @@ import cookieParser from 'cookie-parser'
 
 
 import cors from 'cors'
-import './db/mongooseConnect';
-import { authRouter } from './routes/auth.route';
+import './db/mongooseConnect.js';
+import { authRouter } from './routes/auth.route.js';
 
 
 const app = express()
