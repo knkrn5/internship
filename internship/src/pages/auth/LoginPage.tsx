@@ -57,7 +57,7 @@ const LoginPage = () => {
       return;
     }
 
-    const doesUserExist = await verifyEmail(email);
+    const doesUserExist = await verifyEmail(email.toLowerCase().trim());
     console.log(doesUserExist.IsSuccess);
     if (!doesUserExist.IsSuccess) {
       setErrorMessage(`${doesUserExist.message}, Please Signup`);

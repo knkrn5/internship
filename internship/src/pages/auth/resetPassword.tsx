@@ -51,7 +51,7 @@ const ResetPassword = () => {
     }
 
     // Check if email exists
-    const doesEmailExist = await verifyEmail(formData.email);
+    const doesEmailExist = await verifyEmail(formData.email.toLowerCase().trim());
     if (!doesEmailExist.IsSuccess) {
       setErrorMessage("Email not found. Please check your email or sign up.");
       return;
@@ -60,7 +60,7 @@ const ResetPassword = () => {
     setLoadingState({ sendingOtp: true, verifyingOtp: false, resettingPassword: false });
 
     try {
-      const otpResponse = await sendEmailOtp(formData.email, "reset-password");
+      const otpResponse = await sendEmailOtp(formData.email.toLowerCase().trim(), "reset-password");
       setLoadingState({ sendingOtp: false, verifyingOtp: false, resettingPassword: false });
 
       if (!otpResponse.IsSuccess) {
@@ -83,7 +83,7 @@ const ResetPassword = () => {
     setLoadingState({ sendingOtp: true, verifyingOtp: false, resettingPassword: false });
 
     try {
-      const otpResponse = await sendEmailOtp(formData.email, "reset-password");
+      const otpResponse = await sendEmailOtp(formData.email.toLowerCase().trim(), "reset-password");
       setLoadingState({ sendingOtp: false, verifyingOtp: false, resettingPassword: false });
 
       if (!otpResponse.IsSuccess) {
@@ -112,7 +112,7 @@ const ResetPassword = () => {
     setLoadingState({ sendingOtp: false, verifyingOtp: true, resettingPassword: false });
 
     try {
-      const otpResponse = await verifyEmailOtp(formData.email, formData.enteredOtp);
+      const otpResponse = await verifyEmailOtp(formData.email.toLowerCase().trim(), formData.enteredOtp);
       setLoadingState({ sendingOtp: false, verifyingOtp: false, resettingPassword: false });
 
       if (!otpResponse.IsSuccess) {
@@ -150,7 +150,7 @@ const ResetPassword = () => {
 
     try {
       const response = await axios.post(`${API_URL}/auth/reset-password`, {
-        email: formData.email,
+        email: formData.email.toLowerCase().trim(),
         newPassword: formData.newPassword,
       });
 
