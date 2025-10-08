@@ -72,7 +72,12 @@ export class UserService {
             return new ApiResponse(401, false, "Invalid credentials", null);
         }
 
-        const accessToken = jwt.sign({ userId: user._id, email: user.email }, 'karantest', { expiresIn: '1h' });
+        const JWT_SECRET = process.env.JWT_SECRET;
+        if (!JWT_SECRET) {
+            throw new Error('JWT_SECRET environment variable is not defined');
+        }
+
+        const accessToken = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
 
         return new ApiResponse(200, true, "Login successful", { user, accessToken });
     }
@@ -83,7 +88,11 @@ export class UserService {
         }
 
         try {
-            const decodedToken = jwt.verify(accessToken, 'karantest') as JwtPayload;
+            const JWT_SECRET = process.env.JWT_SECRET;
+            if (!JWT_SECRET) {
+                throw new Error('JWT_SECRET environment variable is not defined');
+            }
+            const decodedToken = jwt.verify(accessToken, JWT_SECRET) as JwtPayload;
             const userId = decodedToken.userId;
 
             const user = await userModel.findById(userId).select('-password -_id -createdAt -updatedAt');
