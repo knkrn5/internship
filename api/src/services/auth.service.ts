@@ -185,4 +185,34 @@ export class UserService {
         }
     }
 
+    static async resetPassword(email: string, newPassword: string): Promise<ApiResponse> {
+        if (!email) {
+            return new ApiResponse(400, false, "Email is required", null);
+        }
+
+        if (!newPassword) {
+            return new ApiResponse(400, false, "New password is required", null);
+        }
+
+        try {
+            // Find user by email
+            const user = await userModel.findOne({ email });
+            if (!user) {
+                return new ApiResponse(404, false, "User not found", null);
+            }
+
+            // Update user password
+            user.password = newPassword;
+            await user.save();
+
+            console.log(`✅ Password reset successfully for user: ${email}`);
+            return new ApiResponse(200, true, "Password reset successfully", null);
+        } catch (error: any) {
+            console.error("❌ Error in resetPassword:", error);
+            return new ApiResponse(500, false, "Failed to reset password", {
+                message: error?.message ?? 'Unknown error'
+            });
+        }
+    }
+
 }

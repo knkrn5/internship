@@ -107,4 +107,17 @@ export class AuthController {
             return res.status(500).json(new ApiResponse(500, false, 'Internal Server Error', null));
         }
     }
+
+    static async resetPassword(req: Request, res: Response): Promise<Response<ApiResponse, Record<string, any>>> {
+        try {
+            const { email, newPassword } = req.body;
+            const result = await UserService.resetPassword(email, newPassword);
+            return res.status(result.statusCode).json(result);
+        } catch (error) {
+            if (error instanceof ApiResponse) {
+                return res.status(error.statusCode).json(error);
+            }
+            return res.status(500).json(new ApiResponse(500, false, 'Internal Server Error', null));
+        }
+    }
 }
